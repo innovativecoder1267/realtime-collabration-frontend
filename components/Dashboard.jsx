@@ -402,230 +402,9 @@ useEffect(() => {
       console.log("user removed successfully",message)
     })
   },[])
- 
 
 const otherusers=usersinroom.find((u)=>u.user!=hostid)
-// return (
-//   <div
-//     className={`flex h-screen w-screen overflow-hidden transition-colors duration-300 ${
-//       darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
-//     }`}
-//   >
-//     {/* SIDEBAR */}
-//     <div
-//       className={`w-64 p-4 flex-col hidden md:flex ${
-//         darkMode ? "bg-gray-800" : "bg-white"
-//       }`}
-//     >
-//       <button
-//         onClick={() => setDarkMode(!darkMode)}
-//         className={`flex items-center gap-2 mb-6 px-3 py-2 rounded-md ${
-//           darkMode
-//             ? "bg-gray-700 hover:bg-gray-600"
-//             : "bg-gray-200 hover:bg-gray-300"
-//         }`}
-//       >
-//         {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-//         <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>
-//       </button>
-
-//       <nav className="space-y-2">
-//         <div
-//           className="flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-700 hover:text-white cursor-pointer"
-//           onClick={() => setcomingsoon(true)}
-//         >
-//           <div className="flex items-center gap-3">
-//             <LayoutList size={18} />
-//             <span>Kanban</span>
-//           </div>
-//           <span className="text-xs bg-gray-600 px-2 py-0.5 rounded-md">
-//             Pro
-//           </span>
-//         </div>
-
-//         <div className="border-t border-gray-600 my-4"></div>
-
-//         <div
-//           onClick={() => setopenusers(true)}
-//           className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-700 hover:text-white cursor-pointer"
-//         >
-//           <Users size={18} />
-//           <span>Users</span>
-//         </div>
-//       </nav>
-//     </div>
-
-//     {/* MAIN AREA */}
-//     <div className="flex-1 flex flex-col">
-//       {/* TOP BAR */}
-//       <div className="flex items-center justify-between px-4 md:px-6 py-3">
-//         <AudioControls
-//           isHost={hostid === socket.id}
-//           roomid={roomid}
-//           targetedsocketid={socket.id}
-//           name={name}
-//           callstate={callState}
-//           ismanageroom={() => setmanageroom(true)}
-//         />
-
-//         {!roomid && (
-//       <button
-//       onClick={handle}
-//       className="
-//       h-10 px-5 rounded-xl
-//       bg-gradient-to-r from-indigo-600 to-purple-600
-//     text-white font-medium
-//       shadow-md hover:shadow-lg
-//     hover:from-indigo-500 hover:to-purple-500
-//       transition-all
-//   "
-// >
-//   + Create Room
-//     </button>
-//         )}
-
-//         {/* RIGHT CLUSTER – DESKTOP ONLY */}
-//         <div className="hidden md:flex items-center gap-4">
-//           {/* Chat */}
-//           <button
-//             onClick={() => setChatOpen(true)}
-//             className="bg-indigo-600 text-white p-2 rounded-xl hover:bg-indigo-700"
-//           >
-//         <div className="flex items-center gap-2">
-//           <MessageCircle size={17} />
-//           <span>Chat With Team</span>
-//       </div>
-            
-//           </button>
-
-//           {/* Notification */}
-//           <div className="relative cursor-pointer">
-//             <Bell size={22} onClick={() => setOpenbell(!Openbell)} />
-//             <span className="absolute -top-1 -right-1 text-xs bg-red-600 text-white rounded-full px-1">
-//               {numbers > 99 ? "99+" : numbers}
-//             </span>
-//           </div>
-
-//           {/* Avatar */}
-//           <img
-//             src={avatar}
-//             className="h-9 w-9 rounded-full border-2 border-white"
-//           />
-//         </div>
-//       </div>
-
-//       {/* NOTIFICATIONS DROPDOWN */}
-//       {Openbell && (
-//         <motion.div
-//           initial={{ opacity: 0, y: -10 }}
-//           animate={{ opacity: 1, y: 0 }}
-//           className="absolute top-16 right-6 w-72 rounded-xl shadow-xl bg-gray-800 dark:bg-gray-800 z-[9999]"
-//         >
-//           <div className="p-3 font-semibold border-b">Notifications</div>
-//           <div className="max-h-60 overflow-y-auto p-3 space-y-2">
-//             {notifications.length === 0 ? (
-//               <p className="text-sm opacity-60">No notifications</p>
-//             ) : (
-//               notifications.map((n, i) => (
-//                 <div key={i} className="p-2 rounded bg-gray-800 text-shadow-white dark:bg-gray-700">
-//                   {n}
-//                 </div>
-//               ))
-//             )}
-//           </div>
-//         </motion.div>
-//       )}
-
-//       {/* POPUPS / MODALS */}
-//       {popuptrue &&
-//         alertpopup &&
-//         createPortal(
-//           <div className="fixed top-6 right-6 z-[999999]">
-//             <AlertDemo message={alertpopup} />
-//           </div>,
-//           document.body
-//         )}
-
-//       {Manageroom && (
-//         <ManageRoom
-//           roomId={roomid}
-//           participants={usersinroom}
-//           onClose={() => setmanageroom(false)}
-//           onEndRoom={handleEndroom}
-//           host={hostid}
-//           otheruser={otherusers}
-//         />
-//       )}
-
-//       {callState === "connected" &&
-//         createPortal(
-//           <InCallControls
-//             onLeave={handleleave}
-//             isMuted={muted}
-//             onMute={MuteLogic}
-//           />,
-//           document.body
-//         )}
-//         {endtrue && <AlertDemo message={endroom}/>}
-
-//       {/* USERS MODAL */}
-//       {openusers && (
-//         <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-md flex items-center justify-center">
-//           <motion.div
-//             initial={{ scale: 0.8, opacity: 0 }}
-//             animate={{ scale: 1, opacity: 1 }}
-//             className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-96"
-//           >
-//             <AllUsers
-//               users={usersinroom}
-//               host={hostid}
-//               roomid={roomid}
-//               onClose={() => setopenusers(false)}
-//             />
-//           </motion.div>
-//         </div>
-//       )}
-//       {invite && <Invite/>}
-//       <RolePopup visible={visible} message={popup} />
-
-//       {callState === "ringing" && (
-//         <HostVoicePopup
-//           targetedsocketid={fromsocket}
-//           name={fromname}
-//           avatar={avatar}
-//           onAccept={handleAccept}
-//           onReject={() => setCallState("idle")}
-//         />
-//       )}
-
-//       {/* WHITEBOARD */}
-//       <div className="flex-1 overflow-hidden">
-//         <Whiteboard avatar={avatar} host={socket.id === hostid} />
-//       </div>
-//     </div>
-
-//     {/* CHAT OVERLAY – ALL SCREENS */}
-//     {openchat && (
-//       <div className="fixed inset-0 bg-black/50 z-[9999]">
-//         <motion.div
-//           initial={{ opacity: 0, scale: 0.2 }}
-//           animate={{ opacity: 1, scale: 0.9 }}
-//           className="absolute bottom-5 right-5"
-//         >
-//           <ChatSystem avatar={avatar} />
-//         </motion.div>
-//         <button
-//           onClick={() => setChatOpen(false)}
-//           className="absolute top-5 right-5 bg-red-600 text-white px-3 py-1 rounded"
-//         >
-//           ✕
-//         </button>
-//       </div>
-//     )}
-
-//     {comingsoon && <KanbanBoard onClose={() => setcomingsoon(false)} />}
-//   </div>
-// );
+ 
 return (
   <div
     className={`flex h-screen w-screen overflow-hidden transition-colors duration-300 ${
@@ -691,7 +470,7 @@ return (
         {/* LEFT */}
         <div className="flex-shrink-0">
           <AudioControls
-            isHost={hostid === socket.id}
+            isHost={socket.id===hostid}
             roomid={roomid}
             targetedsocketid={socket.id}
             name={name}
@@ -882,5 +661,6 @@ return (
     {comingsoon && <KanbanBoard onClose={() => setcomingsoon(false)} />}
   </div>
 );
+
 
 }
