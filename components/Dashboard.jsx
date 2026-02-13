@@ -483,18 +483,9 @@ return (
         {!roomid && (
           <button
             onClick={handle}
-            className="
-              h-9 px-4
-              rounded-lg
-              bg-gradient-to-r from-indigo-600 to-purple-600
-              text-white text-sm font-medium
-              shadow-md
-              whitespace-nowrap
-              transition-all
-              scale-95 sm:scale-100
-            "
-          >
-            + Create Room
+           className="h-9 px-4 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm shadow-md"
+>  
+           + Create Room
           </button>
         )}
 
@@ -664,3 +655,4 @@ return (
 
 
 }
+
