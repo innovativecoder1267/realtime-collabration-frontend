@@ -235,11 +235,13 @@ export default function Whiteboard({ avatar,host }) {
 
 
     <Tldraw
+     licenseKey={process.env.NEXT_PUBLIC_TLDRAW_LICENSE_KEY}
       onMount={handleMount}
       onPointerDown={() => setShowDrawHint(false)}
     />
   </div>
 );
+
 
 
 
