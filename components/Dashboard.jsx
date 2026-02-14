@@ -1,4 +1,4 @@
-  "use client"
+ "use client"
  import React, { use, useEffect, useRef, useState } from "react"
  import Whiteboard from "./excalidraw"
  import socket from "./socket"
@@ -705,6 +705,4 @@ if (mobile) {
  
 
 }
-}
-
 
