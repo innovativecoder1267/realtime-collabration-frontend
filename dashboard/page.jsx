@@ -1,12 +1,10 @@
-"use client"
-import Dashboard from "../components/Dashboard"
+import { Suspense } from "react";
+import Dashboard from "../components/Dashboard";
 
-export default function Dash(){
- return(
-    <div>
-        <div>
-         <Dashboard/>
-        </div>
-    </div>
- )
+export default function Dash() {
+  return (
+    <Suspense fallback={<div>Loading dashboard...</div>}>
+      <Dashboard />
+    </Suspense>
+  );
 }
