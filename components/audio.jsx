@@ -1,15 +1,13 @@
 import socket from "./socket"
-export default  function AudioControls({
+export default  function  AudioControls({
   isHost,
   inCall,
   muted,
-  onRequest,
   onMute,
   onLeave,
   roomid,
   name,
   targetedsocketid,
-  onHostTalk,
   ismanageroom
 })
 {
