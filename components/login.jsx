@@ -1,3 +1,4 @@
+"use client"
 import { useState } from "react"
 import LoginButton from "./google";
 import Link from "next/link";
@@ -97,3 +98,4 @@ async function handleclick() {
     </div>
   );
 }
+
