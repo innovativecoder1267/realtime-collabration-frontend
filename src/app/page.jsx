@@ -1,4 +1,3 @@
-
 "use client";
 import Link from "next/link";
 import LiveSyncBoards from "./components/livesync";
@@ -103,9 +102,7 @@ export default function Landingpage() {
       <span className="group-hover:translate-x-1 transition-transform">→</span>
     </Link>
 
-    <button className="px-9 py-4 rounded-xl font-semibold text-sm border border-gray-300 bg-white/80 backdrop-blur hover:border-gray-400 hover:bg-white transition">
-      Join with Code
-    </button>
+
   </div>
 
   {/* TRUST LINE */}
@@ -119,7 +116,7 @@ export default function Landingpage() {
 
 
 <img
-  src="/board.png"
+  src="https://thumbs.dreamstime.com/b/collaborative-whiteboard-area-communal-space-large-whiteboards-where-employees-freely-brainstorm-ideas-showcasing-teamwork-341146470.jpg"
   alt="Whiteboard preview"
   className="mx-auto w-[80%] max-h-[360px] object-contain rounded-[24px] shadow-xl border border-gray-200"
 />
@@ -164,90 +161,4 @@ export default function Landingpage() {
       <Footer />
     </main>
   );
-}
-
-
-
-
-// <section className="relative max-w-7xl mx-auto text-center px-4 pt-24 md:pt-36 overflow-hidden">
-
-//   {/* PREMIUM BACKGROUND MESH */}
-//   <div className="absolute inset-0 -z-10">
-//     <div className="absolute left-1/2 top-20 -translate-x-1/2 h-[520px] w-[520px] bg-blue-500/20 blur-[160px] rounded-full" />
-//     <div className="absolute left-1/3 top-60 h-[420px] w-[420px] bg-purple-500/20 blur-[160px] rounded-full" />
-//   </div>
-
-//   {/* MICRO BADGE */}
-//   <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 bg-white/80 backdrop-blur text-sm text-gray-700 shadow-sm">
-//     ⚡ Built for fast-moving teams
-//   </div>
-
-//   {/* HEADING */}
-//   <h1 className="mt-6 text-4xl md:text-6xl xl:text-7xl font-extrabold leading-[1.05] tracking-tight">
-//     <span className="text-gray-900">Work Collaboration</span>
-//     <br />
-//     <span className="bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 bg-clip-text text-transparent">
-//       Easy. Fast. Real-time.
-//     </span>
-//   </h1>
-
-//   {/* SUBTEXT */}
-//   <p className="mt-6 max-w-2xl mx-auto text-gray-600 text-base md:text-lg leading-relaxed">
-//     A real-time collaborative whiteboard built for modern teams to
-//     brainstorm, plan, and execute ideas — without friction.
-//   </p>
-
-//   {/* CTA */}
-//   <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center">
-//     <Link
-//       href="/signup"
-//       className="group inline-flex items-center gap-2 px-9 py-4 bg-blue-600 text-white rounded-xl font-semibold text-sm shadow-lg hover:shadow-2xl  transition-all"
-//     >
-//       Create New Workspace
-//       <span className="group-hover:translate-x-1 transition-transform">→</span>
-//     </Link>
-
-//     <button className="px-9 py-4 rounded-xl font-semibold text-sm border border-gray-300 bg-white/80 backdrop-blur hover:border-gray-400 hover:bg-white transition">
-//       Join with Code
-//     </button>
-//   </div>
-
-//   {/* TRUST LINE */}
-//   <p className="mt-4 text-xs text-gray-500">
-//     No credit card required • Free forever for small teams
-//   </p>
-
-//   {/* HERO IMAGE */}
-//   <div className="relative mx-auto mt-24 w-full max-w-md md:max-w-5xl">
-//     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 blur-3xl rounded-[32px] -z-10" />
-
-//     <img
-//       src="/board.png"
-//       alt="Whiteboard preview"
-//    className="relative mx-auto mt-2 w-full max-w-sm sm:max-w-md md:max-w-3xl lg:max-w-4xl"
-//     />
-//   </div>
-
-//   {/* SOCIAL PROOF */}
-//   <div className="mt-20 max-w-xl mx-auto">
-//     <div className="flex items-start gap-4 rounded-2xl border border-gray-200 bg-white/90 backdrop-blur p-6 shadow-lg">
-//       <img
-//         src="https://randomuser.me/api/portraits/women/44.jpg"
-//         className="w-12 h-12 rounded-full"
-//         alt="User"
-//       />
-
-//       <div className="text-left">
-//         <p className="text-sm text-gray-600 leading-relaxed">
-//           “Collabs helped our team cut meetings in half and move ideas
-//           to execution insanely fast.”
-//         </p>
-
-//         <p className="mt-2 text-sm font-semibold text-gray-900">
-//           John <span className="text-gray-500 font-normal">• Product Lead</span>
-//         </p>
-//       </div>
-//     </div>
-//   </div>
-
-// </section>
+}       
