@@ -25,8 +25,7 @@
   MessageCircle,
   MessageCircleHeart,
 } from "lucide-react"
-import axios from "axios" 
-import { AlertDemo } from "./alertdemo"       
+import axios from "axios"      
 
 export default function Dashboard() {
   const [darkMode,setDarkMode] = useState(true)
@@ -882,5 +881,6 @@ return (
     {comingsoon && <KanbanBoard onClose={() => setcomingsoon(false)} />}
   </div>
 );
+
 
 }
