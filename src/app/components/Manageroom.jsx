@@ -11,7 +11,7 @@ export default function ManageRoom({
   onEndRoom,
   host,
 }) {
-  const inviteURL = `https://realtime-collabration-frontend.vercel.app/dashboard?room${roomId}`;
+  const inviteURL = `https://realtime-collabration-frontend.vercel.app/dashboard?room=${roomId}`;
 
   const hostUser = participants.find((u) => u.user === host);
   const otherUsers = participants.filter((u) => u.user !== host);
@@ -129,5 +129,6 @@ export default function ManageRoom({
     </div>
   );
 }
+
 
 
