@@ -27,7 +27,7 @@ export default function Invite() {
         );
 
         const roomId = res.data.data.roomId;
-        const inviteURL = `https://realtime-collabration-frontend-ozad83tkw.vercel.app/dashboard?room=${roomId}`;
+        const inviteURL = `https://realtime-collabration-frontend.vercel.app/dashboard?room${roomId}`;
         setUrl(inviteURL);
 
         if (!roomParam) {
@@ -157,4 +157,5 @@ export default function Invite() {
     </div>
   );
 }
+
 
