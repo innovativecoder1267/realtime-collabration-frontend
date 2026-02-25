@@ -11,9 +11,6 @@
  import RolePopup from "./rolepopup"
  import KanbanBoard from "./kanban"
  import AudioControls from "./audio"
- import HostVoicePopup from "./hostpopup"
- import InCallControls from "./Incallcontrols"
- import { createPortal } from "react-dom"
  import ManageRoom from "./Manageroom"
  import { useRouter } from "next/navigation";
  import {
@@ -25,7 +22,9 @@
   MessageCircle,
   MessageCircleHeart,
 } from "lucide-react"
-import axios from "axios"      
+import axios from "axios" 
+import HostVoicePopup from "./hostpopup"
+import InCallControls from "./Incallcontrols"
 
 export default function Dashboard() {
   const [darkMode,setDarkMode] = useState(true)
@@ -61,6 +60,8 @@ export default function Dashboard() {
   const [endroom,setendroom]=useState([])
   const [activeroom,setactiveroom]=useState(false)
   const [endtrue,setendroomtrue]=useState(false)
+  const [mobile,setmobile]=useState(false)
+  const [accepting,setaccepting]=useState(false)
   const router=useRouter();
 function isTokenValid(token) {
   try {
@@ -80,7 +81,7 @@ function isTokenValid(token) {
           "https://api.dicebear.com/7.x/thumbs/svg?seed=Sam",
           "https://api.dicebear.com/7.x/bottts/svg?seed=Alpha",
           "https://api.dicebear.com./7.x/big-smile/svg?seed=Joy",
-      "https://api.dicebear.com/7.x/pixel-art/svg?seed=UserX",
+          "https://api.dicebear.com/7.x/pixel-art/svg?seed=UserX",
        
     ];
  return list[Math.floor(Math.random() * list.length)];
@@ -130,24 +131,19 @@ function isTokenValid(token) {
         socket.on("leaved",handler)
         return ()=>socket.off("leaved",handler)
       },[])
-
+      useEffect(()=>{
+        const check=()=>setmobile(window.innerWidth<600)
+        check();
+        window.addEventListener("resize",check)
+        return () => window.removeEventListener("resize",check)
+      },[])
 
     useEffect(() => {
     const pc = new RTCPeerConnection({
       iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
     });
     
-    pc.onnegotiationneeded = async () => {
-    if (!fromsocket) return;
-
-    const offer = await pc.createOffer();
-    await pc.setLocalDescription(offer);
-
-    socket.emit("webrtc-offer", {
-    targetedsocketid: fromsocket,
-    offer,
-  });
-};
+  
     pcref.current = pc;
 
     pc.onicecandidate = (event) => {
@@ -161,10 +157,19 @@ function isTokenValid(token) {
   
 
     pc.ontrack = (event) => {
-      const audio = document.createElement("audio");
-      audio.srcObject = event.streams[0];
-      audio.autoplay = true;
-    };
+  let audio = document.getElementById("remote-audio");
+
+  if (!audio) {
+    audio = document.createElement("audio");
+    audio.id = "remote-audio";
+    audio.autoplay = true;
+    audio.playsInline = true;
+    document.body.appendChild(audio);
+  }
+
+  audio.srcObject = event.streams[0];
+};
+
 
     const iceHandler = async ({ candidate }) => {
       if (candidate && pcref.current) {
@@ -215,23 +220,6 @@ useEffect(() => {
 
   return () => socket.off("webrtc-answer");
 }, []);
- async function handleAccept() {
-  console.log("function started")
-  const pc = pcref.current;
-  if (!pc) return;
-
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  stream.getTracks().forEach(track => pc.addTrack(track, stream));
-   console.log("HOST ACCEPTED → START WEBRTC");
-  const offer = await pc.createOffer();
-  await pc.setLocalDescription(offer);
-  setCallState("connecting");
-  socket.emit("webrtc-offer", {
-    targetedsocketid: fromsocket, //  ya host jisko bhi
-    offer,
-  });
-
-}
 
 
   function handle() {
@@ -243,6 +231,7 @@ useEffect(() => {
       setpopup(data.message)
       setvisible(true)
     })
+    return () =>socket.off("role-popup")
   },[])
   useEffect(()=>{
     socket.on("voice-popup",({name,fromsocketid,message})=>{
@@ -335,7 +324,7 @@ useEffect(() => {
     socket.emit("allow-list",roomid)
     const listenhandler=(list)=>{
       setallowed(list)
-      sethostid(list[0])
+      
       console.log("host id is",hostid)
     }
     socket.on("list",listenhandler)
@@ -382,6 +371,48 @@ useEffect(() => {
   /* 3️⃣ Reset states */
  
 }
+async function Handleaccept() {
+  const pc = pcref.current;
+  if (!pc) return;
+
+  // 🧠 Already connected? kuch mat karo
+  if (pc.signalingState !== "stable") {
+    console.log("PC not stable, skipping accept");
+    return;
+  }
+
+  const stream = await navigator.mediaDevices.getUserMedia({
+    audio: {
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true,
+    },
+  });
+
+  // 🔒 Prevent duplicate tracks
+  const existingAudioSender = pc
+    .getSenders()
+    .find(sender => sender.track?.kind === "audio");
+
+  if (!existingAudioSender) {
+    stream.getTracks().forEach(track => {
+      pc.addTrack(track, stream);
+    });
+  }
+
+  // 🔥 Create offer ONLY HERE
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+
+  socket.emit("webrtc-offer", {
+    targetedsocketid: fromsocket,
+    offer,
+  });
+
+  setCallState("connecting");
+}
+
+
   useEffect(()=>{
     const handler=(message)=>{
       setendroom(message)
@@ -401,19 +432,37 @@ useEffect(() => {
       console.log("user removed successfully",message)
     })
   },[])
+ const otherusers=usersinroom.find((u)=>u.user!=hostid)
+
+if (mobile) {
+  return (
+    <div className="h-screen w-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+      <div className="max-w-sm text-center p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-xl">
+        <div className="text-4xl mb-3">🖥️</div>
+        <h2 className="text-lg font-semibold mb-2">
+          Desktop Required
+        </h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          This application is currently optimized for desktop or laptop screens.
+          <br />
+          Mobile support is coming soon.
+        </p>
+      </div>
+    </div>
+  );
+}
+
  
 
-const otherusers=usersinroom.find((u)=>u.user!=hostid)
-
-return (
+  return (
   <div
-    className={`flex h-screen w-screen overflow-hidden transition-colors duration-300 ${
+    className={`flex h-screen w-screen overflow-hidden ${
       darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
     }`}
   >
-    {/* SIDEBAR */}
+    {/* ================= DESKTOP SIDEBAR ================= */}
     <div
-      className={`w-64 p-4 flex-col hidden md:flex ${
+      className={`hidden md:flex w-64 p-4 flex-col ${
         darkMode ? "bg-gray-800" : "bg-white"
       }`}
     >
@@ -455,131 +504,97 @@ return (
       </nav>
     </div>
 
-    {/* MAIN AREA */}
-    <div className="flex-1 flex flex-col min-w-0">
+    {/* ================= MAIN AREA ================= */}
+    <div className="flex-1 relative overflow-hidden flex flex-col">
 
-      {/* TOP BAR */}
-      <div
-        className="
-          flex flex-wrap md:flex-nowrap
-          items-center gap-2
-          justify-between
-          px-3 md:px-6 py-3
-        "
-      >
-        {/* LEFT */}
-        <div className="flex-shrink-0">
-          <AudioControls
-            isHost={hostid === socket.id}
-            roomid={roomid}
-            targetedsocketid={socket.id}
-            name={name}
-            callstate={callState}
-            ismanageroom={() => setmanageroom(true)}
-          />
-        </div>
+      {/* ================= DESKTOP TOP BAR ================= */}
+      <div className="hidden md:flex items-center justify-between px-6 py-3">
+        <AudioControls
+          isHost={socket.id===hostid}
+          roomid={roomid}
+          targetedsocketid={socket.id}
+          name={name}
+          callstate={callState}
+          ismanageroom={() => setmanageroom(true)}
+        />
 
-        {/* CREATE ROOM – NEVER HIDES */}
         {!roomid && (
           <button
             onClick={handle}
-            className="
-              h-9 px-4
-              rounded-lg
-              bg-gradient-to-r from-indigo-600 to-purple-600
-              text-white text-sm font-medium
-              shadow-md
-              whitespace-nowrap
-              transition-all
-              scale-95 sm:scale-100
-            "
+            className="h-9 px-4 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm shadow-md"
           >
             + Create Room
           </button>
         )}
-
-        {/* RIGHT CLUSTER */}
-        <div
-          className="
-            flex items-center gap-3
-            ml-auto
-            scale-95 sm:scale-100
-          "
-        >
-          {/* CHAT */}
+      {accepting && (
+        <InCallControls/>
+      )}
+        <div className="flex items-center gap-3">
           <button
             onClick={() => setChatOpen(true)}
-            className="
-              bg-indigo-600 text-white
-              px-3 py-2 rounded-lg
-              text-sm
-              hidden sm:flex
-              items-center gap-2
-              hover:bg-indigo-700
-            "
+            className="bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm flex items-center gap-2"
           >
-            <MessageCircle size={16} />
-            <span className="hidden md:inline">Chat</span>
+            <MessageCircle size={16} /> Chat
           </button>
 
-          {/* BELL */}
           <div className="relative cursor-pointer">
             <Bell size={20} onClick={() => setOpenbell(!Openbell)} />
-            <span className="absolute -top-1 -right-1 text-[10px] bg-red-600 text-white rounded-full px-1">
+            <span className="absolute -top-1 -right-1 text-[10px] bg-red-600 px-1 rounded-full">
               {numbers > 99 ? "99+" : numbers}
             </span>
           </div>
 
-          {/* AVATAR */}
-          <img
-            src={avatar}
-            className="h-8 w-8 rounded-full border border-white"
-          />
+          <img src={avatar} className="h-8 w-8 rounded-full" />
         </div>
       </div>
 
-      {/* NOTIFICATIONS */}
-      {Openbell && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="
-            fixed top-16 right-3
-            w-72
-            rounded-xl shadow-xl
-            bg-gray-800
-            z-[9999]
-          "
+      {/* ================= MOBILE TOP BAR ================= */}
+      <div className="md:hidden fixed top-0 left-0 right-0 h-[56px] z-50 bg-gray-900 border-b border-white/10 flex items-center px-3">
+        <button
+          onClick={() => setmanageroom(true)}
+          className="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm"
         >
-          <div className="p-3 font-semibold border-b">Notifications</div>
-          <div className="max-h-60 overflow-y-auto p-3 space-y-2">
-            {notifications.length === 0 ? (
-              <p className="text-sm opacity-60">No notifications</p>
-            ) : (
-              notifications.map((n, i) => (
-                <div
-                  key={i}
-                  className="p-2 rounded bg-gray-700 text-sm"
-                >
-                  {n}
-                </div>
-              ))
+          ⚙ Manage room
+        </button>
+
+        <div className="ml-3 text-sm opacity-80">Page 1 ▾</div>
+
+        <div className="ml-auto flex items-center gap-3">
+          <div className="relative">
+            <Bell size={18} onClick={() => setOpenbell(!Openbell)} />
+            {numbers > 0 && (
+              <span className="absolute -top-1 -right-1 text-[10px] bg-red-600 px-1 rounded-full">
+                {numbers}
+              </span>
             )}
           </div>
-        </motion.div>
-      )}
+          <img src={avatar} className="h-7 w-7 rounded-full" />
+        </div>
+      </div>
 
-      {/* POPUPS */}
-      {popuptrue &&
-        alertpopup &&
-        createPortal(
-          <div className="fixed top-6 right-6 z-[999999]">
-            <AlertDemo message={alertpopup} />
-          </div>,
-          document.body
-        )}
+      {/* ================= DESKTOP WHITEBOARD ================= */}
+      <div className="hidden md:flex flex-1 overflow-hidden" >
+        <Whiteboard avatar={avatar} host={socket.id === hostid} />
+      </div>
+      {/* ================= MOBILE WHITEBOARD ================= */}
+ 
 
-      {Manageroom && (
+
+      {/* ================= MOBILE WHITEBOARD ================= */}
+      <div
+        className="
+             md:hidden
+             absolute
+            inset-0
+            pt-[56px]
+            pb-[96px]
+            overflow-hidden
+        "
+      >
+        <Whiteboard avatar={avatar} host={socket.id === hostid} />
+      </div>
+    </div>
+             {Manageroom && (
         <ManageRoom
           roomId={roomid}
           participants={usersinroom}
@@ -589,79 +604,108 @@ return (
           otheruser={otherusers}
         />
       )}
+       
+       
+    {/* ================= MOBILE BOTTOM BAR ================= */}
+    <div
+      className="
+        md:hidden
+        fixed
+        bottom-[env(safe-area-inset-bottom)]
+        left-3
+        right-3
+        h-[56px]
+        z-50
+        bg-gray-900/95
+        backdrop-blur-xl
+        border border-white/10
+        rounded-2xl
+        flex items-center justify-between px-3
+      "
+    >
+      <button
+        onClick={() => setopenusers(true)}
+        className="px-3 py-2 bg-red-600 rounded-xl text-sm"
+      >
+        👤 Users
+      </button>
 
-      {callState === "connected" &&
-        createPortal(
-          <InCallControls
-            onLeave={handleleave}
-            isMuted={muted}
-            onMute={MuteLogic}
-          />,
-          document.body
-        )}
-
-      {endtrue && <AlertDemo message={endroom} />}
-
-      {/* USERS MODAL */}
-      {openusers && (
-        <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-md flex items-center justify-center">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-96 max-w-[90vw]"
-          >
-            <AllUsers
-              users={usersinroom}
-              host={hostid}
-              roomid={roomid}
-              onClose={() => setopenusers(false)}
-            />
-          </motion.div>
-        </div>
-      )}
-
-      {invite && <Invite />}
-      <RolePopup visible={visible} message={popup} />
-
-      {callState === "ringing" && (
-        <HostVoicePopup
-          targetedsocketid={fromsocket}
-          name={fromname}
-          avatar={avatar}
-          onAccept={handleAccept}
-          onReject={() => setCallState("idle")}
-        />
-      )}
-
-      {/* WHITEBOARD */}
-      <div className="flex-1 min-h-0 overflow-hidden">
-        <Whiteboard avatar={avatar} host={socket.id === hostid} />
-      </div>
+      <button
+        onClick={() => setChatOpen(true)}
+        className="px-3 py-2 bg-slate-800 rounded-xl text-sm"
+      >
+        💬 Chat
+      </button>
+    
     </div>
 
-    {/* CHAT OVERLAY */}
+    {Openbell && (
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="fixed top-16 right-3 w-72 rounded-xl shadow-xl bg-gray-800 z-[9999]"
+      >
+        <div className="p-3 font-semibold border-b">Notifications</div>
+        <div className="max-h-60 overflow-y-auto p-3 space-y-2">
+          {notifications.length === 0 ? (
+            <p className="text-sm opacity-60">No notifications</p>
+          ) : (
+            notifications.map((n, i) => (
+              <div key={i} className="p-2 rounded bg-gray-700 text-sm">
+                {n}
+              </div>
+            ))
+          )}
+        </div>
+      </motion.div>
+    )}
+
     {openchat && (
+       
       <div className="fixed inset-0 bg-black/50 z-[9999]">
         <motion.div
-          initial={{ opacity: 0, scale: 0.2 }}
-          animate={{ opacity: 1, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
           className="absolute bottom-4 right-4"
         >
           <ChatSystem avatar={avatar} />
         </motion.div>
-        <button
+          <button
           onClick={() => setChatOpen(false)}
           className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded"
         >
           ✕
         </button>
       </div>
+       
     )}
 
+    {openusers && (
+      <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-md flex items-center justify-center">
+        <AllUsers
+          users={usersinroom}
+          host={hostid}
+          roomid={roomid}
+          onClose={() => setopenusers(false)}
+        />
+      </div>
+    )}
+    {callState==="ringing" &&(
+      <HostVoicePopup
+      onAccept={Handleaccept}
+      onReject={()=>setpopuptrue(false)}
+      
+      />
+    )}
     {comingsoon && <KanbanBoard onClose={() => setcomingsoon(false)} />}
+    {invite && <Invite />}
+    <RolePopup visible={visible} message={popup} />
   </div>
 );
-
+ 
 
 }
+
+}
+
 
