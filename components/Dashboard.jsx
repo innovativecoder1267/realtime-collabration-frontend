@@ -132,7 +132,7 @@ function isTokenValid(token) {
         return ()=>socket.off("leaved",handler)
       },[])
       useEffect(()=>{
-        const check=()=>setmobile(window.innerWidth<600)
+        const check=()=>setmobile(window.innerWidth<1000)
         check();
         window.addEventListener("resize",check)
         return () => window.removeEventListener("resize",check)
@@ -705,5 +705,6 @@ async function Handleaccept() {
  
 
 }
+
 
 
