@@ -434,23 +434,23 @@ async function Handleaccept() {
   },[])
  const otherusers=usersinroom.find((u)=>u.user!=hostid)
 
-if (mobile) {
-  return (
-    <div className="h-screen w-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-      <div className="max-w-sm text-center p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-xl">
-        <div className="text-4xl mb-3">🖥️</div>
-        <h2 className="text-lg font-semibold mb-2">
-          Desktop Required
-        </h2>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          This application is currently optimized for desktop or laptop screens.
-          <br />
-          Mobile support is coming soon.
-        </p>
-      </div>
-    </div>
-  );
-}
+// if (mobile) {
+//   return (
+//     <div className="h-screen w-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+//       <div className="max-w-sm text-center p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-xl">
+//         <div className="text-4xl mb-3">🖥️</div>
+//         <h2 className="text-lg font-semibold mb-2">
+//           Desktop Required
+//         </h2>
+//         <p className="text-sm text-gray-600 dark:text-gray-400">
+//           This application is currently optimized for desktop or laptop screens.
+//           <br />
+//           Mobile support is coming soon.
+//         </p>
+//       </div>
+//     </div>
+//   );
+// }
 
  
 
@@ -705,4 +705,5 @@ if (mobile) {
  
 
 }
+
 
