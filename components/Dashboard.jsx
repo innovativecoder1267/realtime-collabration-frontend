@@ -131,12 +131,6 @@ function isTokenValid(token) {
         socket.on("leaved",handler)
         return ()=>socket.off("leaved",handler)
       },[])
-      // useEffect(()=>{
-      //   const check=()=>setmobile(window.innerWidth<1000)
-      //   check();
-      //   window.addEventListener("resize",check)
-      //   return () => window.removeEventListener("resize",check)
-      // },[])
 
     useEffect(() => {
     const pc = new RTCPeerConnection({
@@ -705,6 +699,7 @@ async function Handleaccept() {
  
 
 }
+
 
 
 
