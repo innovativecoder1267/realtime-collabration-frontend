@@ -40,8 +40,11 @@ export default function Register() {
       })
 
       if (response.status === 200) {
+        console.log("Res is ",response)
         alert("congrats you are signedup")
-        router.push("/verify")
+        console.log(response.data.data);
+        const otp=response.data.data
+        router.push(`/verify?otp=${otp}`)
       }
     } catch (error) {
       if (error.response.status===403||500) {
@@ -151,9 +154,3 @@ export default function Register() {
     </div>
   )
 }
-
-
-
-
-
-//"http://localhost:4000/register"
