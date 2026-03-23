@@ -107,9 +107,3 @@ export default function OneTime() {
     </div>
   )
 }
-
-   
-      </div>
-    </div>
-  )
-}
